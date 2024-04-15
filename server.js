@@ -1,32 +1,43 @@
 const express = require("express");
 const app = express();
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const photoRoute = express.Router();
 const uri = process.env.MongoDBConnectionString;
+const mongoose = require("mongoose");
 
-/* example code for MongoDB connection */
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
+let db;
+mongoose.connect(uri).then(() => {
+  db = mongoose.connection;
 });
-async function run() {
+
+app.use("/photos", photoRoute);
+
+photoRoute.get("/:photoID", (req, res) => {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
+    var photoID = new mongoose.Types.ObjectId(req.params.photoID);
+  } catch (err) {
+    return res.status(400).json({
+      message:
+        "Invalid PhotoID in URL parameter. Must be a single String of 12 bytes or a string of 24 hex characters",
+    });
   }
-}
-run().catch(console.dir);
+
+  const bucket = new mongoose.mongo.GridFSBucket(db, {
+    bucketName: "photos",
+  });
+  let downloadStream = bucket.openDownloadStream(photoID);
+
+  downloadStream.on("data", (chunk) => {
+    res.write(chunk);
+  });
+
+  downloadStream.on("error", () => {
+    res.sendStatus(404);
+  });
+
+  downloadStream.on("end", () => {
+    res.end();
+  });
+});
 
 app.use("/", express.static("dist/photo-sharing-app/browser"));
 

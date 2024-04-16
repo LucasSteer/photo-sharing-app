@@ -1,0 +1,9 @@
+<div class="photo-gallery-container">
+  <img
+    *ngFor="let photo of photos; index as i"
+    width="250px"
+    src="/photos/{{ photo }}"
+    alt=""
+  />
+</div>
+<!-- TODO: loading indicator -->

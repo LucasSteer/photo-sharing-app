@@ -91,6 +91,31 @@ photoRoute.post("/", (req, res) => {
   });
 });
 
+photoRoute.delete("/:filename", async (req, res) => {
+  if (!req.params.filename) {
+    return res.status(400).json({
+      message: "Invalid filename in URL parameter.",
+    });
+  }
+
+  const bucket = new mongoose.mongo.GridFSBucket(db, {
+    bucketName: "photos",
+  });
+
+  try {
+    // delete the first image that matches the filename
+    const photo = await bucket.find({ filename: req.params.filename }).next();
+    bucket.delete(photo._id);
+    return res.status(200).json({
+      message: `Photo with filename ${req.params.filename} and id ${photo._id} successfully deleted`,
+    });
+  } catch {
+    return res.status(400).json({
+      message: `Unable to delete photo with filename ${req.params.filename}`,
+    });
+  }
+});
+
 app.use("/", express.static("dist/photo-sharing-app/browser"));
 
 app.listen(3000, function () {

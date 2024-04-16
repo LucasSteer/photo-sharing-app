@@ -14,10 +14,16 @@ Build the frontend:
 npm run build
 ```
 
-Set the environment variable for the connection string to your MongoDB instance:
+Create a local config.env file:
 
 ```bash
-export MongoDBConnectionString="mongodb+srv://<DB_Username>:<DB_Password>@<DB_URL>/?retryWrites=true&w=majority"
+touch config.env
+```
+
+Add your MongoDB connection string to config.env:
+
+```
+MongoDBConnectionString="mongodb+srv://<DB_Username>:<DB_Password>@<DB_URL>/photo-storage-app?retryWrites=true&w=majority"
 ```
 
 Ensure your MongoDB instance is running, then start the application:

@@ -1,6 +1,6 @@
 import express from "express";
 const app = express();
-const photoRoute = express.Router();
+const photosRoute = express.Router();
 const uri = process.env.MongoDBConnectionString;
 import mongoose from "mongoose";
 import { Readable } from "stream";
@@ -15,9 +15,9 @@ var upload = multer({
 await mongoose.connect(uri);
 let db = mongoose.connection;
 
-app.use("/photos", photoRoute);
+app.use("/photos", photosRoute);
 
-photoRoute.get("/", async (req, res) => {
+photosRoute.get("/", async (req, res) => {
   const bucket = new mongoose.mongo.GridFSBucket(db, {
     bucketName: "photos",
   });
@@ -32,7 +32,7 @@ photoRoute.get("/", async (req, res) => {
   return res.send(photos);
 });
 
-photoRoute.get("/:filename", (req, res) => {
+photosRoute.get("/:filename", (req, res) => {
   if (!req.params.filename) {
     return res.status(400).json({
       message: "Invalid filename in URL parameter.",
@@ -57,7 +57,7 @@ photoRoute.get("/:filename", (req, res) => {
   });
 });
 
-photoRoute.post("/", (req, res) => {
+photosRoute.post("/", (req, res) => {
   // TODO: permit only image files
   upload.single("photo")(req, res, (err) => {
     if (err) {
@@ -91,7 +91,7 @@ photoRoute.post("/", (req, res) => {
   });
 });
 
-photoRoute.delete("/:filename", async (req, res) => {
+photosRoute.delete("/:filename", async (req, res) => {
   if (!req.params.filename) {
     return res.status(400).json({
       message: "Invalid filename in URL parameter.",

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "node --env-file=config.env server.js",
+    "start": "node --env-file=config.env server.mjs",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"

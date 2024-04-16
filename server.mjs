@@ -1,23 +1,19 @@
-const express = require("express");
+import express from "express";
 const app = express();
 const photoRoute = express.Router();
 const uri = process.env.MongoDBConnectionString;
-const mongoose = require("mongoose");
-const { Readable } = require("stream");
+import mongoose from "mongoose";
+import { Readable } from "stream";
 
-const multer = require("multer");
+import multer from "multer";
 var storage = multer.memoryStorage();
 var upload = multer({
   storage: storage,
   limits: { fields: 1, fileSize: 6000000, files: 1, parts: 2 },
 });
 
-let db;
-(() => {
-  mongoose.connect(uri).then(async () => {
-    db = mongoose.connection;
-  });
-})();
+await mongoose.connect(uri);
+let db = mongoose.connection;
 
 app.use("/photos", photoRoute);
 
@@ -33,7 +29,7 @@ photoRoute.get("/", async (req, res) => {
   }
   // TODO: error handling
 
-  res.send(photos);
+  return res.send(photos);
 });
 
 photoRoute.get("/:filename", (req, res) => {

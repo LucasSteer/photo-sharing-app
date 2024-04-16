@@ -13,26 +13,40 @@ var upload = multer({
 });
 
 let db;
-mongoose.connect(uri).then(() => {
-  db = mongoose.connection;
-});
+(() => {
+  mongoose.connect(uri).then(async () => {
+    db = mongoose.connection;
+  });
+})();
 
 app.use("/photos", photoRoute);
 
-photoRoute.get("/:photoID", (req, res) => {
-  try {
-    var photoID = new mongoose.Types.ObjectId(req.params.photoID);
-  } catch (err) {
+photoRoute.get("/", async (req, res) => {
+  const bucket = new mongoose.mongo.GridFSBucket(db, {
+    bucketName: "photos",
+  });
+
+  const cursor = bucket.find({});
+  const photos = [];
+  for await (const doc of cursor) {
+    photos.push(doc.filename); // TODO: create a type for this
+  }
+  // TODO: error handling
+
+  res.send(photos);
+});
+
+photoRoute.get("/:filename", (req, res) => {
+  if (!req.params.filename) {
     return res.status(400).json({
-      message:
-        "Invalid PhotoID in URL parameter. Must be a single String of 12 bytes or a string of 24 hex characters",
+      message: "Invalid filename in URL parameter.",
     });
   }
 
   const bucket = new mongoose.mongo.GridFSBucket(db, {
     bucketName: "photos",
   });
-  let downloadStream = bucket.openDownloadStream(photoID);
+  let downloadStream = bucket.openDownloadStreamByName(req.params.filename);
 
   downloadStream.on("data", (chunk) => {
     res.write(chunk);

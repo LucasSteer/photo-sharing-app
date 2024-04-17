@@ -12,6 +12,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 export class SignupFormComponent {
   signupForm = new FormGroup({
     email: new FormControl(''),
+    password: new FormControl(''),
   });
 
   constructor(private http: HttpClient) {}

@@ -1,9 +1,13 @@
 import express from "express";
 const app = express();
-const photosRoute = express.Router(); // TODO: RESTful naming convention for routes
+// TODO: RESTful naming convention for routes
+// TODO: refactor out routes to clean up server.js
+const photosRoute = express.Router();
 const usersRoute = express.Router();
 const uri = process.env.MongoDBConnectionString;
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
+const SALT_WORK_FACTOR = 10;
 import { Readable } from "stream";
 import multer from "multer";
 var storage = multer.memoryStorage();
@@ -16,8 +20,36 @@ await mongoose.connect(uri);
 let db = mongoose.connection;
 
 const userSchema = new mongoose.Schema({
-  email: String,
+  email: { type: String, required: true, index: { unique: true } },
+  password: { type: String, required: true },
 });
+userSchema.pre("save", async function (next) {
+  const user = this;
+  // only hash the password if it has been modified (or is new)
+  if (!user.isModified("password")) return next();
+
+  try {
+    // generate a salt
+    const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
+    // hash the password along with our new salt
+    const hash = await bcrypt.hash(user.password, salt);
+
+    // override the cleartext password with the hashed one
+    user.password = hash;
+    next();
+  } catch (err) {
+    if (err) {
+      return next(err);
+    }
+  }
+});
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  try {
+    return await bcrypt.compare(candidatePassword, this.password);
+  } catch (err) {
+    if (err) console.error(err);
+  }
+};
 const User = mongoose.model("User", userSchema);
 
 import bodyParser from "body-parser";
@@ -134,12 +166,13 @@ photosRoute.delete("/:filename", async (req, res) => {
 app.use("/users", usersRoute);
 
 usersRoute.post("/", async (req, res) => {
-  if (!req.body.email) {
+  if (!req.body.email || !req.body.password) {
     return res.status(400).json({ message: "Error creating user" });
   }
 
   const newUser = new User({
     email: req.body.email,
+    password: req.body.password,
   });
 
   await newUser.save();

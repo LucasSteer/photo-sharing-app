@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { PhotoComponent } from '../photo/photo.component';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { PhotoComponent } from '../../photo/photo.component';
+import { AuthService } from '../../auth.service';
 
 @Component({
   selector: 'app-photo-gallery',
@@ -13,10 +14,11 @@ import { PhotoComponent } from '../photo/photo.component';
 export class PhotoGalleryComponent implements OnInit {
   photos: Array<String> = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private auth: AuthService) {}
 
   ngOnInit() {
-    const photo$ = this.http.get("/photos");
+    const options = { params: new HttpParams().set('userId', this.auth.getUserId()) };
+    const photo$ = this.http.get("/photos", options);
     photo$.subscribe((res: any) => {
       this.photos = res;
     });

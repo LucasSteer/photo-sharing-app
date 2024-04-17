@@ -60,6 +60,7 @@ const authMiddleware = (req, res, next) => {
 
     req.userData = {
       email: decodedToken.email,
+      userId: decodedToken.userId,
     };
 
     next();
@@ -84,7 +85,11 @@ photosRoute.get("/", async (req, res) => {
     bucketName: "photos",
   });
 
-  const cursor = bucket.find({});
+  const filter = req.query.userId
+    ? { "metadata.userId": req.query.userId }
+    : {};
+
+  const cursor = bucket.find(filter);
   const photos = [];
   for await (const doc of cursor) {
     photos.push(doc.filename); // TODO: create a type for this
@@ -138,10 +143,8 @@ photosRoute.post("/", authMiddleware, (req, res) => {
     });
 
     let uploadStream = bucket.openUploadStream(`${Date.now()}-user-photo`, {
-      // TODO: confirm metadata structure
       metadata: {
-        field: "userEmail",
-        value: req.userData.email,
+        userId: req.userData.userId,
       },
     });
     readablePhotoStream.pipe(uploadStream);
@@ -160,6 +163,7 @@ photosRoute.post("/", authMiddleware, (req, res) => {
   });
 });
 
+// TODO: auth for deletion, check JWT and ensure that logged in user owns the image
 photosRoute.delete("/:filename", async (req, res) => {
   if (!req.params.filename) {
     return res.status(400).json({
@@ -220,6 +224,7 @@ app.post("/login", async (req, res) => {
     const token = jwt.sign(
       {
         email: fetchedUser.email,
+        userId: fetchedUser._id,
       },
       process.env.JWTSecret,
       { expiresIn: "1h" }
@@ -228,6 +233,7 @@ app.post("/login", async (req, res) => {
     return res.status(200).json({
       token: token,
       expiresIn: 3600,
+      userId: fetchedUser._id,
     });
   } catch (err) {
     return res.status(400).json({ message: "Error logging in" });
@@ -237,6 +243,7 @@ app.post("/login", async (req, res) => {
 app.use("/", express.static("dist/photo-sharing-app/browser"));
 app.use("/signup", express.static("dist/photo-sharing-app/browser"));
 app.use("/login", express.static("dist/photo-sharing-app/browser"));
+app.use("/profile", express.static("dist/photo-sharing-app/browser"));
 
 app.listen(3000, function () {
   console.log("listening on 3000");

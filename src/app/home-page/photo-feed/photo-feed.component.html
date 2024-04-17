@@ -1,4 +1,8 @@
-<div class="photo-feed-container">
-  <app-photo *ngFor="let photo of photos; index as i" photoName="{{ photo }}" />
+<div class="photos-container">
+  <mat-card *ngFor="let photo of photos; index as i">
+    <mat-card-content>
+      <app-photo photoName="{{ photo }}" />
+    </mat-card-content>
+  </mat-card>
 </div>
 <!-- TODO: loading indicator -->

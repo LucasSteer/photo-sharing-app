@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { PhotoComponent } from '../../photo/photo.component';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-photo-feed',
   standalone: true,
-  imports: [CommonModule, PhotoComponent],
+  imports: [CommonModule, PhotoComponent, MatCardModule],
   templateUrl: './photo-feed.component.html',
   styleUrl: './photo-feed.component.css'
 })

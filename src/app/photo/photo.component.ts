@@ -1,10 +1,9 @@
 import { Component, Input } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-photo',
   standalone: true,
-  imports: [MatIconModule],
+  imports: [],
   templateUrl: './photo.component.html',
   styleUrl: './photo.component.css'
 })

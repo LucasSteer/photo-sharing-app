@@ -203,6 +203,7 @@ app.post("/login", async (req, res) => {
 
 app.use("/", express.static("dist/photo-sharing-app/browser"));
 app.use("/signup", express.static("dist/photo-sharing-app/browser"));
+app.use("/login", express.static("dist/photo-sharing-app/browser"));
 
 app.listen(3000, function () {
   console.log("listening on 3000");

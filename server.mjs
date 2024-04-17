@@ -1,10 +1,10 @@
 import express from "express";
 const app = express();
-const photosRoute = express.Router();
+const photosRoute = express.Router(); // TODO: RESTful naming convention for routes
+const usersRoute = express.Router();
 const uri = process.env.MongoDBConnectionString;
 import mongoose from "mongoose";
 import { Readable } from "stream";
-
 import multer from "multer";
 var storage = multer.memoryStorage();
 var upload = multer({
@@ -15,6 +15,20 @@ var upload = multer({
 await mongoose.connect(uri);
 let db = mongoose.connection;
 
+const userSchema = new mongoose.Schema({
+  email: String,
+});
+const User = mongoose.model("User", userSchema);
+
+import bodyParser from "body-parser";
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
+app.use(bodyParser.json());
+
+// TODO: investigate idiomatic gridfs with mongoose
 app.use("/photos", photosRoute);
 
 photosRoute.get("/", async (req, res) => {
@@ -57,6 +71,7 @@ photosRoute.get("/:filename", (req, res) => {
   });
 });
 
+// TODO: confirm POST is RESTful
 photosRoute.post("/", (req, res) => {
   // TODO: permit only image files
   upload.single("photo")(req, res, (err) => {
@@ -114,6 +129,24 @@ photosRoute.delete("/:filename", async (req, res) => {
       message: `Unable to delete photo with filename ${req.params.filename}`,
     });
   }
+});
+
+app.use("/users", usersRoute);
+
+usersRoute.post("/", async (req, res) => {
+  if (!req.body.email) {
+    return res.status(400).json({ message: "Error creating user" });
+  }
+
+  const newUser = new User({
+    email: req.body.email,
+  });
+
+  await newUser.save();
+
+  return res.status(201).json({
+    message: "New user created: " + newUser.email,
+  });
 });
 
 app.use("/", express.static("dist/photo-sharing-app/browser"));

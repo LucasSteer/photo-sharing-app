@@ -1,0 +1,35 @@
+<nav>
+  <ul>
+    <li>
+      <a routerLink="/" routerLinkActive="active" ariaCurrentWhenActive="page"
+        >Home</a
+      >
+    </li>
+    <li *ngIf="auth.getUserId(); else elseBlock">
+      <a
+        routerLink="/profile"
+        routerLinkActive="active"
+        ariaCurrentWhenActive="page"
+        >Profile</a
+      >
+    </li>
+    <ng-template #elseBlock>
+      <li>
+        <a
+          routerLink="/signup"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+          >Sign Up</a
+        >
+      </li>
+      <li>
+        <a
+          routerLink="/login"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+          >Log In</a
+        >
+      </li>
+    </ng-template>
+  </ul>
+</nav>

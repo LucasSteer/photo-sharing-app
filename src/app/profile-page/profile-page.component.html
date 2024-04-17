@@ -1,5 +1,5 @@
-<p *ngIf="!userId; else elseBlock">You're not logged in!.</p>
+<p *ngIf="!auth.getUserId(); else elseBlock">You're not logged in!.</p>
 <ng-template #elseBlock>
   <app-file-uploader></app-file-uploader>
-  <app-photo-gallery></app-photo-gallery
-></ng-template>
+  <app-photo-gallery></app-photo-gallery>
+</ng-template>

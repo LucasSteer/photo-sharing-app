@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatIconModule } from '@angular/material/icon'; 
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-file-uploader',
@@ -12,7 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 export class FileUploaderComponent {
   fileName = '';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   onFileSelected(event: Event) {
     if (event === null || event.target === null) return;
@@ -25,8 +26,13 @@ export class FileUploaderComponent {
         this.fileName = file.name;
         const formData = new FormData();
         formData.append("photo", file);
-        const upload$ = this.http.post("/photos", formData);
-        upload$.subscribe();
+        this.http.post("/photos", formData).subscribe({next: (res: any) => {
+          console.log(res.message)
+          // TODO: should store images in some common store
+          window.location.reload();
+        }, error: (err: any) => {
+          console.error("Error: ", err);
+        }});
     }
   }
 }

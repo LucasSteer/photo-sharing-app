@@ -17,11 +17,11 @@ export class PhotoEditorComponent {
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  // TODO: handle removing image from screen (refresh?)
   onClickDelete() {
     this.http.delete(`/photos/${this.photoName}`).subscribe({next: (res: any) => {
-      console.log(`Photo named ${this.photoName} deleted`);
-      this.router.navigate(['/profile']);
+      console.log(res.message)
+      // TODO: should store images in some common store
+      window.location.reload();
     }, error: (err: any) => {
       console.error("Error: ", err);
     }});

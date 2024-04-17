@@ -78,6 +78,7 @@ export class AuthService {
     }
   }
 
+  // TODO: should run on app start to grab existing JWT
   private getAuthData() {
     const token = localStorage.getItem("token");
     const expirationDate = localStorage.getItem("expiration");

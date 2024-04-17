@@ -182,6 +182,25 @@ usersRoute.post("/", async (req, res) => {
   });
 });
 
+// TODO: is it a bad pattern for post and use on same route?
+app.post("/login", async (req, res) => {
+  if (!req.body.email || !req.body.password) {
+    return res.status(400).json({ message: "Error logging in" });
+  }
+
+  try {
+    const compareUser = await User.findOne({ email: req.body.email });
+    const isMatch = await compareUser.comparePassword(req.body.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Password does not match" });
+    }
+
+    return res.status(200).json({ message: "Login succesful" });
+  } catch (err) {
+    return res.status(400).json({ message: "Error logging in" });
+  }
+});
+
 app.use("/", express.static("dist/photo-sharing-app/browser"));
 app.use("/signup", express.static("dist/photo-sharing-app/browser"));
 

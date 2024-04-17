@@ -1,0 +1,5 @@
+<form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+  <label for="email">Email Address: </label>
+  <input id="email" type="email" formControlName="email" />
+  <button type="submit" [disabled]="!signupForm.valid">Submit</button>
+</form>

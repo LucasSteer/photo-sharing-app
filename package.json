@@ -1,9 +1,10 @@
 {
   "name": "photo-sharing-app",
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "ng": "ng",
-    "start": "node --env-file=config.env server.mjs",
+    "start": "node --env-file=config.env server.js",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"

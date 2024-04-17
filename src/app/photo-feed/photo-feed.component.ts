@@ -10,7 +10,7 @@ import { PhotoComponent } from '../photo/photo.component';
   templateUrl: './photo-feed.component.html',
   styleUrl: './photo-feed.component.css'
 })
-export class PhotoGalleryComponent implements OnInit {
+export class PhotoFeedComponent implements OnInit {
   photos: Array<String> = [];
 
   constructor(private http: HttpClient) {}

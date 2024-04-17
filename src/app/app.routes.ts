@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { SignupFormComponent } from './signup-form/signup-form.component';
 import { LoginFormComponent } from './login-form/login-form.component';
 import { ProfilePageComponent } from './profile-page/profile-page.component';
+import { HomePageComponent } from './home-page/home-page.component';
 
 export const routes: Routes = [
   {
@@ -15,5 +16,9 @@ export const routes: Routes = [
   {
     path: 'profile',
     component: ProfilePageComponent
+  },
+  {
+    path: '',
+    component: HomePageComponent
   }
 ];

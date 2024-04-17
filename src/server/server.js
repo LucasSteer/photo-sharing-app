@@ -126,6 +126,7 @@ photosRoute.get("/:filename", (req, res) => {
 
 // TODO: confirm POST is RESTful
 photosRoute.post("/", authMiddleware, (req, res) => {
+  // TODO: allow multiple image uploads
   // TODO: permit only image files
   upload.single("photo")(req, res, (err) => {
     if (err) {

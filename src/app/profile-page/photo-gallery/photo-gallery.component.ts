@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { PhotoComponent } from '../../photo/photo.component';
 import { AuthService } from '../../auth.service';
+import { PhotoEditorComponent } from './photo-editor/photo-editor.component';
 
 @Component({
   selector: 'app-photo-gallery',
   standalone: true,
-  imports: [CommonModule, PhotoComponent],
+  imports: [CommonModule,  PhotoEditorComponent],
   templateUrl: './photo-gallery.component.html',
   styleUrl: './photo-gallery.component.css'
 })

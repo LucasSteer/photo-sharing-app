@@ -165,7 +165,7 @@ photosRoute.post("/", authMiddleware, (req, res) => {
 });
 
 // TODO: auth for deletion, check JWT and ensure that logged in user owns the image
-photosRoute.delete("/:filename", async (req, res) => {
+photosRoute.delete("/:filename", authMiddleware, async (req, res) => {
   if (!req.params.filename) {
     return res.status(400).json({
       message: "Invalid filename in URL parameter.",
@@ -179,13 +179,18 @@ photosRoute.delete("/:filename", async (req, res) => {
   try {
     // delete the first image that matches the filename
     const photo = await bucket.find({ filename: req.params.filename }).next();
+    if (!photo.metadata || photo.metadata.userId !== req.userData.userId) {
+      return res.status(400).json({
+        message: `Unable to delete photo with filename ${req.params.filename}. Photo not associated with user ${req.userData.userId}`,
+      });
+    }
     bucket.delete(photo._id);
     return res.status(200).json({
       message: `Photo with filename ${req.params.filename} and id ${photo._id} successfully deleted`,
     });
   } catch {
     return res.status(400).json({
-      message: `Unable to delete photo with filename ${req.params.filename}`,
+      message: `Error deleting photo with filename ${req.params.filename}`,
     });
   }
 });

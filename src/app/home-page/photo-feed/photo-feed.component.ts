@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { PhotoComponent } from '../photo/photo.component';
+import { PhotoComponent } from '../../photo/photo.component';
 
 @Component({
   selector: 'app-photo-feed',

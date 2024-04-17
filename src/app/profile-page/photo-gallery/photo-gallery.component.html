@@ -1,4 +1,7 @@
 <div class="photo-gallery-container">
-  <app-photo *ngFor="let photo of photos; index as i" photoName="{{ photo }}" />
+  <app-photo-editor
+    *ngFor="let photo of photos; index as i"
+    photoName="{{ photo }}"
+  />
 </div>
 <!-- TODO: loading indicator -->

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { PhotoFeedComponent } from '../photo-feed/photo-feed.component';
+import { PhotoFeedComponent } from './photo-feed/photo-feed.component';
 
 @Component({
   selector: 'app-home-page',

@@ -1,0 +1,7 @@
+.photo-gallery-container {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 1rem;
+  align-items: center;
+  justify-items: center;
+}

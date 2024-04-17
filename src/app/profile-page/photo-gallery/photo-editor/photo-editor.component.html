@@ -1,4 +1,10 @@
-<app-photo photoName="{{ photoName }}"></app-photo>
-<button mat-mini-fab color="primary" type="button" (click)="onClickDelete()">
-  <mat-icon>delete</mat-icon>
-</button>
+<mat-card class="photo-editor-card">
+  <mat-card-content>
+    <div class="content-container">
+      <app-photo photoName="{{ photoName }}"></app-photo>
+      <button mat-icon-button type="button" (click)="onClickDelete()">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+  </mat-card-content>
+</mat-card>

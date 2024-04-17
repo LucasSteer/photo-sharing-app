@@ -1,0 +1,15 @@
+li {
+  list-style-type: none;
+}
+
+ul {
+  display: flex;
+
+  justify-content: space-between;
+}
+
+.controls {
+  display: flex;
+  gap: 1rem;
+  padding-right: 40px;
+}

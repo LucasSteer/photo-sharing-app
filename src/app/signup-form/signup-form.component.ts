@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signup-form',
@@ -15,11 +16,12 @@ export class SignupFormComponent {
     password: new FormControl(''),
   });
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   onSubmit() {
     this.http.post(`/users`, this.signupForm.value).subscribe({next: (res: any) => {
       console.log(res.message);
+      this.router.navigate(['/']);
     }, error: (err: any) => {
       console.error("Error: ", err);
     }});

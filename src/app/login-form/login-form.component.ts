@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-login-form',
@@ -16,14 +17,9 @@ export class LoginFormComponent {
     password: new FormControl(''),
   });
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router, private auth: AuthService) {}
 
   onSubmit() {
-    this.http.post(`/login`, this.loginForm.value).subscribe({next: (res: any) => {
-      console.log(res.message);
-      this.router.navigate(['/']);
-    }, error: (err: any) => {
-      console.error("Error: ", err);
-    }});
+    this.auth.signIn(this.loginForm.value.email || '', this.loginForm.value.password || '');
   }
 }

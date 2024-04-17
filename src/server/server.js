@@ -8,6 +8,7 @@ const uri = process.env.MongoDBConnectionString;
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 const SALT_WORK_FACTOR = 10;
+import jwt from "jsonwebtoken";
 import { Readable } from "stream";
 import multer from "multer";
 var storage = multer.memoryStorage();
@@ -51,6 +52,21 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
   }
 };
 const User = mongoose.model("User", userSchema);
+
+const authMiddleware = (req, res, next) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1]; // get the token after 'Bearer'
+    const decodedToken = jwt.verify(token, process.env.JWTSecret);
+
+    req.userData = {
+      email: decodedToken.email,
+    };
+
+    next();
+  } catch (error) {
+    res.status(401).json({ message: "Authentication failed, invalid JWT" });
+  }
+};
 
 import bodyParser from "body-parser";
 app.use(
@@ -104,7 +120,7 @@ photosRoute.get("/:filename", (req, res) => {
 });
 
 // TODO: confirm POST is RESTful
-photosRoute.post("/", (req, res) => {
+photosRoute.post("/", authMiddleware, (req, res) => {
   // TODO: permit only image files
   upload.single("photo")(req, res, (err) => {
     if (err) {
@@ -121,7 +137,13 @@ photosRoute.post("/", (req, res) => {
       bucketName: "photos",
     });
 
-    let uploadStream = bucket.openUploadStream(`${Date.now()}-user-photo`);
+    let uploadStream = bucket.openUploadStream(`${Date.now()}-user-photo`, {
+      // TODO: confirm metadata structure
+      metadata: {
+        field: "userEmail",
+        value: req.userData.email,
+      },
+    });
     readablePhotoStream.pipe(uploadStream);
 
     uploadStream.on("error", () => {
@@ -189,13 +211,24 @@ app.post("/login", async (req, res) => {
   }
 
   try {
-    const compareUser = await User.findOne({ email: req.body.email });
-    const isMatch = await compareUser.comparePassword(req.body.password);
+    const fetchedUser = await User.findOne({ email: req.body.email });
+    const isMatch = await fetchedUser.comparePassword(req.body.password);
     if (!isMatch) {
       return res.status(401).json({ message: "Password does not match" });
     }
 
-    return res.status(200).json({ message: "Login succesful" });
+    const token = jwt.sign(
+      {
+        email: fetchedUser.email,
+      },
+      process.env.JWTSecret,
+      { expiresIn: "1h" }
+    );
+
+    return res.status(200).json({
+      token: token,
+      expiresIn: 3600,
+    });
   } catch (err) {
     return res.status(400).json({ message: "Error logging in" });
   }

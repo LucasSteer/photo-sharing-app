@@ -51,6 +51,7 @@ export class AuthService {
     });
   }
 
+  // TODO: should the server consider the old JWT still valid?
   logout() {
     this.token = '';
     this.isAuthenticated = false;

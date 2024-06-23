@@ -1,4 +1,9 @@
 <div class="photos-container">
+  @if(photos.length === 0) {
+  <mat-card>
+    <mat-card-content> There are no photos to display! </mat-card-content>
+  </mat-card>
+  }
   <mat-card *ngFor="let photo of photos; index as i">
     <mat-card-content>
       <app-photo photoName="{{ photo }}" />

@@ -6,7 +6,8 @@
   }
   <mat-card *ngFor="let photo of photos; index as i">
     <mat-card-content>
-      <app-photo photoName="{{ photo }}" />
+      <app-photo photoName="{{ photo.name }}" />
+      <p>{{ photo.author }}</p>
     </mat-card-content>
   </mat-card>
 </div>

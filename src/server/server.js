@@ -92,7 +92,10 @@ photosRoute.get("/", async (req, res) => {
   const cursor = bucket.find(filter);
   const photos = [];
   for await (const doc of cursor) {
-    photos.push(doc.filename); // TODO: create a type for this
+    photos.push({
+      filename: doc.filename,
+      userId: doc.metadata.userId,
+    }); // TODO: create a type for this
   }
   // TODO: error handling
 
@@ -196,6 +199,34 @@ photosRoute.delete("/:filename", authMiddleware, async (req, res) => {
 });
 
 app.use("/users", usersRoute);
+
+async function getUserById(userId) {
+  const user = await User.findById(userId).exec();
+  if (user === null) return null;
+
+  // TODO: best practice on user lookups?
+  user.password = undefined; // remove sensitive information
+
+  return user;
+}
+
+usersRoute.get("/:userId", async (req, res) => {
+  if (!req.params.userId) {
+    return res.status(400).json({
+      message: "Invalid userId in URL parameter.",
+    });
+  }
+
+  const user = await getUserById(req.params.userId);
+
+  if (user === null) {
+    return res.status(400).json({
+      message: `User with userId ${req.params.userId} could not be found.`,
+    });
+  }
+
+  res.send(user);
+});
 
 usersRoute.post("/", async (req, res) => {
   if (!req.body.email || !req.body.password) {

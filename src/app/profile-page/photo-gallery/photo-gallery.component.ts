@@ -18,9 +18,9 @@ export class PhotoGalleryComponent implements OnInit {
 
   ngOnInit() {
     const options = { params: new HttpParams().set('userId', this.auth.getUserId()) };
-    const photo$ = this.http.get("/photos", options);
-    photo$.subscribe((res: any) => {
-      this.photos = res;
+    const photo$ = this.http.get<Array<{ filename: String, userId: String}>>("/photos", options);
+    photo$.subscribe((res) => {
+      this.photos = res.map(photo => photo.filename);
     });
   }
 }

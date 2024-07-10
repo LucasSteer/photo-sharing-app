@@ -47,6 +47,7 @@ export class AuthService {
       },
       error: err => {
         console.log(err)
+        // TODO: handle error when logging in
       }
     });
   }

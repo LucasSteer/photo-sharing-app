@@ -27,10 +27,10 @@ export class FileUploaderComponent {
         const formData = new FormData();
         formData.append("photo", file);
         this.http.post("/photos", formData).subscribe({next: (res: any) => {
-          console.log(res.message)
           // TODO: should store images in some common store
           window.location.reload();
         }, error: (err: any) => {
+          // TODO: handle error when uploading image
           console.error("Error: ", err);
         }});
     }

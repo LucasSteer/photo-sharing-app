@@ -24,9 +24,9 @@ export class SignupFormComponent {
 
   onSubmit() {
     this.http.post(`/users`, this.signupForm.value).subscribe({next: (res: any) => {
-      console.log(res.message);
       this.router.navigate(['/']);
     }, error: (err: any) => {
+      // TODO: handle error when attempting to signup
       console.error("Error: ", err);
     }});
   }

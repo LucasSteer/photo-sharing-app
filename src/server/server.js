@@ -167,7 +167,6 @@ photosRoute.post("/", authMiddleware, (req, res) => {
   });
 });
 
-// TODO: auth for deletion, check JWT and ensure that logged in user owns the image
 photosRoute.delete("/:filename", authMiddleware, async (req, res) => {
   if (!req.params.filename) {
     return res.status(400).json({
@@ -283,5 +282,5 @@ app.use("/login", express.static("dist/photo-sharing-app/browser"));
 app.use("/profile", express.static("dist/photo-sharing-app/browser"));
 
 app.listen(3000, function () {
-  console.log("listening on 3000");
+  console.log("listening on http://localhost:3000");
 });

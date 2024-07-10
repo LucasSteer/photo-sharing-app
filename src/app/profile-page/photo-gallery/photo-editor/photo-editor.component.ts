@@ -20,10 +20,9 @@ export class PhotoEditorComponent {
 
   onClickDelete() {
     this.http.delete(`/photos/${this.photoName}`).subscribe({next: (res: any) => {
-      console.log(res.message)
-      // TODO: should store images in some common store
       window.location.reload();
     }, error: (err: any) => {
+      // TODO: handle error when deleting image
       console.error("Error: ", err);
     }});
   }
